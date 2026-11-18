@@ -45,21 +45,21 @@ async function almacenPostgres(url) {
   const { Pool } = require("pg");
   const externo = /render\.com|amazonaws|neon\.tech|supabase/.test(url) && !/sslmode=disable/.test(url);
   const pool = new Pool({ connectionString: url, ssl: externo ? { rejectUnauthorized: false } : false, max: 5 });
-  await pool.query(`CREATE TABLE IF NOT EXISTS jugadores (
+  await pool.query(`CREATE TABLE IF NOT EXISTS semillin_jugadores (
     id TEXT PRIMARY KEY, clave TEXT NOT NULL, nombre TEXT NOT NULL, avatar TEXT NOT NULL,
     records JSONB NOT NULL DEFAULT '{}'::jsonb, total INT NOT NULL DEFAULT 0, estrellas INT NOT NULL DEFAULT 0,
     mundos INT NOT NULL DEFAULT 0, actualizado TIMESTAMPTZ NOT NULL DEFAULT now())`);
   function fila(r) { return r && { id: r.id, clave: r.clave, nombre: r.nombre, avatar: r.avatar, records: r.records, total: r.total, estrellas: r.estrellas, mundos: r.mundos }; }
   return {
     tipo: "postgres",
-    async obtener(id) { const r = await pool.query("SELECT * FROM jugadores WHERE id = $1", [id]); return fila(r.rows[0]); },
+    async obtener(id) { const r = await pool.query("SELECT * FROM semillin_jugadores WHERE id = $1", [id]); return fila(r.rows[0]); },
     async guardar(j) {
-      await pool.query(`INSERT INTO jugadores (id, clave, nombre, avatar, records, total, estrellas, mundos, actualizado)
+      await pool.query(`INSERT INTO semillin_jugadores (id, clave, nombre, avatar, records, total, estrellas, mundos, actualizado)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, now())
         ON CONFLICT (id) DO UPDATE SET nombre = $3, avatar = $4, records = $5, total = $6, estrellas = $7, mundos = $8, actualizado = now()`,
       [j.id, j.clave, j.nombre, j.avatar, JSON.stringify(j.records), j.total, j.estrellas, j.mundos]);
     },
-    async lista() { const r = await pool.query("SELECT * FROM jugadores ORDER BY total DESC LIMIT 500"); return r.rows.map(fila); }
+    async lista() { const r = await pool.query("SELECT * FROM semillin_jugadores ORDER BY total DESC LIMIT 500"); return r.rows.map(fila); }
   };
 }
 

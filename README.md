@@ -67,10 +67,10 @@ API: `GET /api/salud`, `GET /api/liga?mundo=m04`, `POST /api/puntaje`.
 ### Publicar en Render
 
 1. Sube este repositorio a GitHub.
-2. En Render: **New → Blueprint**, elige el repositorio. `render.yaml` crea el servicio web (Node, plan gratis) y la base de datos PostgreSQL `semillin-liga`.
+2. En Render: **New → Blueprint**, elige el repositorio. `render.yaml` crea el servicio web (Node, plan gratis). En `DATABASE_URL` pega la «Internal Database URL» de una base PostgreSQL de Render (puede ser una que ya uses: el juego solo crea y usa la tabla `semillin_jugadores`).
 3. Render instala con `npm install` y arranca con `node server.js`.
 
-Nota: en el plan gratis el servicio se duerme tras 15 min sin visitas (la primera carga tarda unos 30 s) y la base de datos gratis de Render caduca a los 30 días; después hay que crear otra o pasar a un plan de pago.
+Nota: en el plan gratis el servicio se duerme tras 15 min sin visitas (la primera carga tarda unos 30 s) y Render solo permite una base de datos gratis por cuenta (caduca a los 30 días).
 
 ## Archivos
 
