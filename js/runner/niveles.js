@@ -76,7 +76,7 @@
      ========================================================= */
   function nivelLCG(o) {
     var g = o.g, x = g.x0, pasos = [], n = 0, mixto = g.tipo === "mixto";
-    var fg = mixto ? T`X_{n+1} = (aX_n + c) \bmod m` : T`X_{n+1} = aX_n \bmod m`;
+    var fg = mixto ? T`$X_{n+1} = (aX_n + c) \bmod m$` : T`$X_{n+1} = aX_n \bmod m$`;
     do {
       n++;
       var num = g.a * x + g.c, ent = Math.floor(num / g.m), X1 = num % g.m, R = X1 / g.m;

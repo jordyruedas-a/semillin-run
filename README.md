@@ -5,9 +5,9 @@ Juego de navegador para aprender la materia. Cada mundo es un tema del curso y s
 El juego te da los datos del problema (la semilla, los números rectangulares, los tiempos…) igual que en clase, y tú llenas la tabla celda por celda:
 
 1. **Corres** con Semillín, esquivas virus y juntas monedas. Cada moneda vale **+5 s** de tiempo para resolver.
-2. En la **zona de cálculo** el juego marca con **?** la celda de la tabla que sigue. Escribes el resultado (puedes usar la calculadora del juego o escribir la operación, por ejemplo `16/10`).
-3. Si aciertas, se llena la tabla y ves el procedimiento completo (fórmula de clase y sustitución). Si fallas pierdes 5 s; si se acaba el tiempo pierdes una vida y ves la solución.
-4. Las preguntas de palabras (teoría, manos de póker, conclusiones) se contestan entrando al **tubo** correcto.
+2. En la **zona de cálculo** el juego marca con **?** la celda de la tabla que sigue, muestra la fórmula de clase y los dos valores que tendrán los tubos. Resuelves con la calculadora del juego.
+3. Presionas Enter (o se acaba el tiempo) y corres a los **dos tubos**: uno tiene el resultado correcto y el otro un error típico de clase. Entras al correcto con ↓ (para el tubo B hay que brincar la lava).
+4. Si aciertas, se llena la tabla y ves el procedimiento completo (fórmula de clase y sustitución). Si eliges mal, caes a la lava, pierdes una vida y lo intentas otra vez.
 5. Al final llega el jefe **Dr. Período**: la tabla se oculta y respondes de memoria.
 
 Las fórmulas se ven con notación matemática normal (fracciones, exponentes, subíndices y raíces) gracias a KaTeX.
@@ -25,7 +25,7 @@ Las fórmulas se ven con notación matemática normal (fracciones, exponentes, s
 | Espacio o ↑ | Brincar |
 | ↓ (mantener) | Agacharse (esquiva los virus voladores bajos) |
 | ↓ sobre un tubo | Entrar al tubo |
-| Enter | Revisar tu resultado / continuar / ir a los tubos |
+| Enter | Ir a los tubos / continuar |
 | Esc o P | Pausa |
 
 El mundo 1 empieza con una demo interactiva de 7 pasos que enseña cada control (se puede saltar con Esc).
@@ -54,7 +54,7 @@ El mundo 1 empieza con una demo interactiva de 7 pasos que enseña cada control 
 
 ## Puntaje
 
-- Moneda: 25 pts y +5 s · celda correcta: 200 pts + 2 pts por cada segundo que te sobró.
+- Moneda: 25 pts y +5 s · tubo correcto: 200 pts + 2 pts por cada segundo que te sobró en la zona de cálculo.
 - Racha: cada 3 aciertos seguidos sube el multiplicador (×2, ×3, ×4); cada 4 aciertos seguidos da una vida extra.
 - Estrellas: 3 sin errores ni golpes, 2 con hasta 2 fallas, 1 al terminar.
 
