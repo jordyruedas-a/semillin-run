@@ -536,12 +536,23 @@
     resumen: "Factores: generación de variables, lenguajes de programación, condiciones iniciales, tamaño de la muestra y diseño de experimentos; ventajas y desventajas según Naylor."
   });
 
+  /* Tubo falso de cada celda numérica: el error típico de clase (versión anterior del juego):
+     usar el renglón de al lado, olvidar dividir, olvidar el factor, sumar en vez de restar… */
+  var MALES = {"m04":[2.96393,0.37954,0.548762,1.64],"m05":[0.08236,0.01764,0.09124,0.18133,0.21288,0.27605,0.368],"m06":[2,2,4,1,1,2.4,9.49],"m07":[5,2.5,6,3,3,1,12.75,3.84],"m08":[1,2,3,4,4,0.729,10,10.326236,7.81],"m09":[null,null,null,null,5,4.914,0.218065,5.99],"m10":[2.164246,0.362019,5.148838,3.570492,0.479694,0.234283],"m11":[1.74639,2.74041,0.82812,1.22874,4.5],"m12":[1.079009,1.351643,0.55208,0.81916],"m13":[0.149361205,0.149361205,0.224041808,0.224041808,0.168031356,0.999707663,5,0],"m14":[30,0,10,20,30,20,10,20,30,0,0.5],"m15":[1,9,15,3,0,27,5,32],"m16":[48,147,18.5,180,177,37,11250,1137.5]};
+  NIVELES.forEach(function (Nv) {
+    var lista = MALES[Nv.id] || [];
+    Nv.pasos.forEach(function (p, i) {
+      if (p.tipo !== "num" || p.mal !== undefined || lista[i] === null || lista[i] === undefined) return;
+      p.mal = lista[i]; p.malTxt = p.pesos ? pesos(p.mal) : fx(p.mal, p.dec);
+    });
+  });
+
   /* Numeración y comprobaciones: ningún tubo repite la respuesta y cada paso numérico tiene respuesta finita */
   NIVELES.forEach(function (Nv, i) {
     Nv.num = i + 1;
     Nv.jefe = Nv.jefe.filter(Boolean);
     Nv.pasos.forEach(function (p) {
-      if (p.tipo === "opcion" && p.okTxt === p.malTxt) throw new Error("Distractor igual a la respuesta en " + Nv.id + " · " + p.t);
+      if (!p.malTxt || p.okTxt === p.malTxt) throw new Error("Falta tubo falso o es igual a la respuesta en " + Nv.id + " · " + p.t);
       if (p.tipo === "num" && !isFinite(p.ok)) throw new Error("Respuesta no numérica en " + Nv.id + " · " + p.t);
     });
     Nv.jefe.forEach(function (q) { if (q.ok === q.mal) throw new Error("Distractor del jefe igual en " + Nv.id); });

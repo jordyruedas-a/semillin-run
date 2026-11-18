@@ -202,7 +202,7 @@
   /* Mientras resuelves, consultar el formulario, las tablas o el enunciado NO detiene el reloj (como en un examen). */
   function consulta(html, clase) {
     var enZona = S && S.fase === "calcular" && !S.jefe, pausado = enZona ? false : pausar(true);
-    var m = modal(html, clase + (enZona ? " con-reloj" : ""), function () { if (pausado) pausar(false); var r = raiz.querySelector("#rResp"); if (r) r.focus(); });
+    var m = modal(html, clase + (enZona ? " con-reloj" : ""), function () { if (pausado) pausar(false); });
     if (enZona) { var z = document.createElement("div"); z.className = "reloj-modal"; z.innerHTML = "El reloj sigue corriendo: <b id='rZm'>" + Math.ceil(S.zonaT) + "</b> s"; m.querySelector(".modal-caja").appendChild(z); }
     return m;
   }
@@ -316,7 +316,7 @@
     var demo = i === 0;
     var m = modal("<div class='tarjeta-mundo' style='--c1:" + TEMAS[N.tema].cielo[0] + ";--c2:" + TEMAS[N.tema].cielo[1] + "'><div class='tm-cab'><span class='tm-num'>" + N.num + "</span><div><small>" + N.unidad + " · Mundo " + TEMAS[N.tema].n + "</small><h2>" + N.nombre + "</h2></div></div>" +
       "<p class='enun'>" + M(N.enunciado) + "</p>" + datosHtml(N) +
-      "<div class='tm-como'>Corre y junta monedas (cada una da <b>+" + SEG_MONEDA + " s</b>). En cada zona de cálculo llena la celda que se pide de la tabla: escribe el resultado" + (N.tipo === "teoria" ? " o elige el tubo con la palabra correcta" : "") + "." + (N.tipo === "prueba" ? " El botón <b>Tablas</b> abre las tablas estadísticas del curso." : "") + "</div>" +
+      "<div class='tm-como'>Corre y junta monedas (cada una da <b>+" + SEG_MONEDA + " s</b>). En cada zona de cálculo resuelve la celda que se pide de la tabla y entra al tubo con el resultado correcto." + (N.tipo === "prueba" ? " El botón <b>Tablas</b> abre las tablas estadísticas del curso." : "") + "</div>" +
       "<div class='tm-pie'><span>" + N.pasos.length + " celdas + jefe final · Basado en: " + N.fuente + "</span><button class='btn verde' id='tmGo'>" + (demo ? "Ver demo y jugar" : "¡A correr!") + " <kbd>Enter</kbd></button></div></div>", "tm-modal", function () { inicio(); });
     var go = m.querySelector("#tmGo");
     go.focus();
@@ -342,7 +342,7 @@
       "<div class='formula-run' id='rF'></div>" +
       "<div class='cuerpo-run'><div class='lienzo-run'><canvas width='" + W * 2 + "' height='" + H * 2 + "'></canvas><div class='pregunta-run' id='rQ'></div><div class='aviso-run' id='rA'></div><div class='coach-run' id='rCoach'></div><div class='flash-run' id='rFlash'></div><div class='iris-run' id='rIris'></div></div>" +
       "<div class='lado-run'><div class='tabla-run' id='rT'></div><div class='calc-run' id='rCalc'></div></div></div>" +
-      "<div class='ayuda-run'><kbd>Espacio</kbd>/<kbd>↑</kbd> brincar · <kbd>↓</kbd> agacharse o entrar al tubo · <kbd>Enter</kbd> revisar tu resultado o continuar · <kbd>Esc</kbd> pausa · cada moneda = +" + SEG_MONEDA + " s para resolver</div></div>";
+      "<div class='ayuda-run'><kbd>Espacio</kbd>/<kbd>↑</kbd> brincar · <kbd>↓</kbd> agacharse o entrar al tubo · <kbd>Enter</kbd> ir a los tubos o continuar · <kbd>Esc</kbd> pausa · cada moneda = +" + SEG_MONEDA + " s para resolver</div></div>";
     cv = raiz.querySelector("canvas"); ctx = cv.getContext("2d");
     S = { N: N, i: i, T: TEMAS[N.tema], ti: N.tema, k: 0, vidas: 3, puntos: 0, vel: 240, velBase: 240, y: PISO, vy: 0, suelo: true, dist: 0, objs: [], amb: [],
       fase: "correr", extra: 0, filas: [], inv: 0, t: 0, tramo: null, jefe: 0, aplasta: 0, agachado: false, racha: 0, mejorRacha: 0, aciertos: 0, errores: 0, golpes: 0,
@@ -388,11 +388,10 @@
     { txt: "Mantén <kbd>↓</kbd> para <b>agacharte</b>", espera: "agacha" },
     { txt: "Agáchate (<kbd>↓</kbd>) para esquivar el virus volador", objeto: { tipo: "bajo", r: 16 }, espera: "pasa" },
     { txt: "Junta la moneda: cada moneda te da <b>+" + SEG_MONEDA + " s</b> para resolver el problema", objeto: { tipo: "moneda", y: PISO - 70 }, espera: "moneda" },
-    { txt: "En la <b>zona de cálculo</b> escribe el resultado (usa la calculadora si quieres) y presiona <kbd>Enter</kbd>", espera: "calcula" },
-    { txt: "Si la respuesta es una palabra, párate sobre el <b>tubo</b> correcto y presiona <kbd>↓</kbd>. Para llegar al tubo B, <b>brinca la lava</b>", espera: "tubo" }
+    { txt: "En la <b>zona de cálculo</b> resuelve con la calculadora de la derecha y presiona <kbd>Enter</kbd> para ir a los tubos", espera: "calcula" },
+    { txt: "Párate sobre el <b>tubo</b> con tu resultado y presiona <kbd>↓</kbd>. Para llegar al tubo B, <b>brinca la lava</b>", espera: "tubo" }
   ];
-  var DEMO_CALC = { t: "Demo", tipo: "num", pide: "$2 + 3$", ok: 5, okTxt: "5", fg: "Suma los dos números", f: "$2 + 3 = 5$", filas: [] };
-  var DEMO_TUBO = { t: "Demo", tipo: "opcion", pide: "la tecla para brincar", okTxt: "Espacio", malTxt: "Enter", f: "Para brincar se presiona la tecla ______.", filas: [] };
+  var DEMO_CALC = { t: "Demo", tipo: "num", pide: "$2 + 3$", ok: 5, okTxt: "5", malTxt: "6", fg: "Suma los dos números", f: "$2 + 3 = 5$", filas: [] };
   function iniciarDemo() {
     S.demo = { k: -1 }; S.listo = true; S.vel = 190; S.largo = 1e9; S.paso = null;
     var c = raiz.querySelector("#rCoach");
@@ -408,7 +407,6 @@
     raiz.querySelector("#rCoachT").innerHTML = "<span class='coach-n'>" + (D.k + 1) + "/" + DEMO.length + "</span>" + p.txt;
     if (p.objeto) { var o = Object.assign({ x: S.dist + W + 60, fase: 0 }, p.objeto); S.objs.push(o); D.obj = o; }
     if (p.espera === "calcula") { S.paso = DEMO_CALC; S.extra = SEG_MONEDA; zonaCalculo(); raiz.querySelector(".calc-run").classList.add("brilla"); }
-    if (p.espera === "tubo") { S.paso = DEMO_TUBO; zonaCalculo(); }
   }
   function demoEvento(ev) {
     var D = S && S.demo; if (!D || D.listo) return;
@@ -431,32 +429,24 @@
   }
 
   /* ---------- Zona de cálculo ----------
-     Paso numérico: el jugador escribe el valor de la celda (se aceptan operaciones como 16/10).
-     Paso de texto: lee la frase y entra al tubo con la palabra correcta.
-     El tiempo es la base del paso más +5 s por cada moneda que juntó en la vuelta. */
+     El jugador ve qué celda sigue, la fórmula de clase y los dos valores que tendrán los tubos.
+     Calcula con la calculadora y, cuando está listo (Enter) o se acaba el tiempo, corre a los
+     tubos y entra al del resultado correcto. El tiempo es la base del paso + 5 s por moneda;
+     lo que sobra da puntos extra. */
   function zonaCalculo() {
     var p = S.paso;
-    S.fase = "calcular"; S.tiempoIni = (p.tipo === "num" ? (p.seg || 40) : 25) + S.extra; S.zonaT = S.tiempoIni; S.intentos = 0;
+    S.fase = "calcular"; S.tiempoIni = (p.tipo === "num" ? (p.seg || 40) : 25) + S.extra; S.zonaT = S.tiempoIni; S.zonaRest = 0;
+    var izq = azar() < 0.5;
+    S.ops = izq ? [p.okTxt, p.malTxt] : [p.malTxt, p.okTxt]; S.correcta = izq ? 0 : 1;
     var extra = S.extra ? "<span class='bono-t'>" + IC.moneda + "+" + S.extra + " s de tus monedas</span>" : "<span class='bono-t sin'>Sin monedas: solo tiempo base</span>";
     var reloj = "<div class='reloj-run'><div class='barra-t'><i id='rZb'></i></div><span>" + IC.reloj + "<b id='rZ'>" + Math.ceil(S.zonaT) + "</b> s</span>" + extra + "</div>";
     var titulo = S.demo ? "Zona de cálculo (demo)" : "Zona de cálculo · " + M(p.t);
-    if (p.tipo === "num") {
-      mostrarPregunta(titulo,
-        "<div class='pide-run'>Calcula " + M(p.pide) + "</div>" +
-        (p.fg ? "<div class='fg-run'><small>Fórmula de clase</small>" + M(p.fg) + "</div>" : "") +
-        "<div class='resp-run'><input id='rResp' autocomplete='off' spellcheck='false' placeholder='Escribe tu resultado'><button class='btn verde' id='rOk'>Revisar <kbd>Enter</kbd></button></div>" +
-        "<div class='msg-resp' id='rMsg'>" + (p.tabla ? "Busca el valor en la tabla: botón <b>Tablas</b> de arriba." : "Puedes escribir el número o la operación (por ejemplo 16/10).") + "</div>" + reloj);
-      var inp = raiz.querySelector("#rResp");
-      inp.onkeydown = function (e) { e.stopPropagation(); if (e.key === "Enter") { e.preventDefault(); revisarResp(); } else if (e.key === "Escape") { inp.blur(); menuPausa(); } };
-      raiz.querySelector("#rOk").onclick = revisarResp;
-      setTimeout(function () { if (inp && document.body.contains(inp)) inp.focus(); }, 30);
-    } else {
-      var izq = azar() < 0.5;
-      S.ops = izq ? [p.okTxt, p.malTxt] : [p.malTxt, p.okTxt]; S.correcta = izq ? 0 : 1;
-      mostrarPregunta(titulo, "<div class='frase-run'>" + M(p.f) + "</div><div>¿Qué completa la frase? Los tubos dirán:</div>" + opsHtml() + reloj,
-        "<button class='btn verde' id='rListo'>Ir a los tubos <kbd>Enter</kbd></button>");
-      raiz.querySelector("#rListo").onclick = tubos;
-    }
+    var cuerpo = p.tipo === "num"
+      ? "<div class='pide-run'>Calcula " + M(p.pide) + "</div>" + (p.fg ? "<div class='fg-run'><small>Fórmula de clase</small>" + M(p.fg) + "</div>" : "") +
+        "<div>Resuelve con la calculadora" + (p.tabla ? " y el botón <b>Tablas</b>" : "") + ". Los tubos dirán:</div>"
+      : "<div class='frase-run'>" + M(p.f) + "</div><div>¿Qué completa la frase? Los tubos dirán:</div>";
+    mostrarPregunta(titulo, cuerpo + opsHtml() + reloj, "<button class='btn verde' id='rListo'>Ir a los tubos <kbd>Enter</kbd></button>");
+    raiz.querySelector("#rListo").onclick = tubos;
     pintar();
   }
   function opsHtml() { return "<div class='ops-run'><span><i>A</i>" + M(S.ops[0]) + "</span><span><i>B</i>" + M(S.ops[1]) + "</span></div>"; }
@@ -464,40 +454,6 @@
     var q = raiz.querySelector("#rQ");
     q.innerHTML = "<div class='q-tit'>" + titulo + "</div>" + cuerpo + (pie || "");
     q.style.display = "block"; q.className = "pregunta-run";
-  }
-  /* Convierte lo que escribió el jugador en número: acepta coma decimal, $, % y operaciones de la calculadora. */
-  function leerNumero(txt) {
-    var s = String(txt || "").trim().replace(/\$/g, "").replace(/%$/, "").replace(/\s+/g, "");
-    if (!s) return NaN;
-    if (/^-?\d+,\d+$/.test(s)) s = s.replace(",", ".");
-    s = s.replace(/,/g, "");
-    var v = Number(s);
-    return isNaN(v) ? evaluar(s) : v;
-  }
-  function revisarResp() {
-    if (!S || S.fase !== "calcular" || !S.paso || S.paso.tipo !== "num") return;
-    var inp = raiz.querySelector("#rResp"), msg = raiz.querySelector("#rMsg"), v = leerNumero(inp.value);
-    if (isNaN(v)) { msg.className = "msg-resp mal"; msg.textContent = "Escribe un número (o una operación como 16/10)."; inp.focus(); return; }
-    if (S.demo ? Math.abs(v - 5) < 1e-9 : B.niveles.revisar(S.paso, v)) return acierto();
-    S.intentos++;
-    sonar("bonk", .4); flash("mal");
-    if (S.demo) { msg.className = "msg-resp mal"; msg.textContent = "Casi: 2 + 3 = 5. Escribe 5 y presiona Enter."; inp.select(); return; }
-    S.errores++; S.racha = 0; S.zonaT = Math.max(0.5, S.zonaT - 5);
-    msg.className = "msg-resp mal"; msg.innerHTML = "<b>" + inp.value + "</b> no coincide. Revisa tu procedimiento (−5 s).";
-    var q = raiz.querySelector("#rQ"); q.classList.remove("tiembla"); void q.offsetWidth; q.classList.add("tiembla");
-    inp.select(); pintar();
-  }
-  function acierto() {
-    var p = S.paso;
-    if (S.demo) { S.fase = "correr"; raiz.querySelector("#rQ").style.display = "none"; raiz.querySelector(".calc-run").classList.remove("brilla"); demoEvento("calcula"); return; }
-    S.racha++; S.mejorRacha = Math.max(S.mejorRacha, S.racha); S.aciertos++;
-    if (S.racha > 1 && S.racha % 3 === 0) { parts.texto(PX + 60, PISO - 150, "¡Racha ×" + mult() + "!", "#ff6a00", 34); sonar("chimes", .5); }
-    sonar("party_short", .5); confeti(PX, PISO - 40, 36); flash("bien");
-    var bono = Math.max(0, Math.round(S.zonaT)) * 2;
-    sumar(200 + bono, PX, PISO - 110);
-    if (S.racha % 4 === 0 && S.vidas < 3) { S.vidas++; aviso("¡Vida extra por tu racha!", "bien", 1400); }
-    llenarTabla(p);
-    solucion(true, bono);
   }
   function llenarTabla(p) {
     p.filas.forEach(function (f) { S.filas.push({ v: f.slice(), nuevo: true }); });
@@ -527,16 +483,12 @@
     if (S.k >= S.N.pasos.length) return iniciarJefe();
     S.vel = S.velAnt || S.vel; nuevaVuelta();
   }
-  function tiempoFuera() {
-    if (S.paso.tipo !== "num") return tubos();
-    S.agotados++; S.errores++; S.racha = 0; S.vidas--;
-    sonar("boom", .45); flash("mal");
-    llenarTabla(S.paso);
-    solucion(false);
-  }
+  function tiempoFuera() { tubos(); }
   function tubos() {
-    if (!S || S.fase !== "calcular" || !S.paso || (S.paso.tipo === "num" && !S.jefe)) return;
+    if (!S || S.fase !== "calcular" || !S.paso) return;
     raiz.querySelector("#rQ").style.display = "none";
+    S.zonaRest = S.jefe ? 0 : Math.max(0, S.zonaT);
+    if (S.demo) { raiz.querySelector(".calc-run").classList.remove("brilla"); demoEvento("calcula"); }
     S.fase = "tubos";
     var x0 = S.dist + 620;
     S.tramo = { ini: x0, t1: [x0, x0 + 240], t2: [x0 + 340, x0 + 580], fin: x0 + 820 };
@@ -555,19 +507,20 @@
   function resolver(ok) {
     S.entrando = 0;
     if (S.demo) {
-      if (!ok) { aviso("Ese no era: para brincar se usa Espacio. ¡Inténtalo otra vez!", "mal", 1800); S.tramo = null; S.fase = "correr"; S.vel = 190; setTimeout(function () { if (S && S.demo) { S.demo.k = 5; siguienteDemo(); } }, 900); return; }
+      if (!ok) { aviso("Ese no era: 2 + 3 = 5. ¡Inténtalo otra vez!", "mal", 1800); S.tramo = null; S.fase = "correr"; S.vel = 190; setTimeout(function () { if (S && S.demo) { S.demo.k = 4; siguienteDemo(); } }, 900); return; }
       parts.estallido(PX, PISO - 40, "#7de74e", 30, 5); demoEvento("tubo"); S.tramo = null; S.fase = "correr"; return;
     }
     if (!ok) return fallo();
     S.racha++; S.mejorRacha = Math.max(S.mejorRacha, S.racha); S.aciertos++;
     if (S.racha > 1 && S.racha % 3 === 0) { parts.texto(PX + 60, PISO - 150, "¡Racha ×" + mult() + "!", "#ff6a00", 34); sonar("chimes", .5); }
     sonar("party_short", .5); confeti(PX, PISO - 40, 36); flash("bien");
-    sumar(200, PX, PISO - 110);
+    var bono = S.jefe ? 0 : Math.round(S.zonaRest || 0) * 2;
+    sumar(200 + bono, PX, PISO - 110);
     if (S.jefe) return siguienteJefe();
     if (S.racha % 4 === 0 && S.vidas < 3) { S.vidas++; aviso("¡Vida extra por tu racha!", "bien", 1400); }
     S.tramo = null; S.vel = S.velAnt || S.vel;
     llenarTabla(S.paso);
-    solucion(true, 0);
+    solucion(true, bono);
   }
   function fallo() {
     S.errores++; S.racha = 0;
@@ -578,7 +531,7 @@
     if (S.muerto) return;
     if (S.demo) {
       S.tramo = null; S.fase = "correr"; S.y = S.prev.y = PISO; S.vy = 0; S.suelo = true; S.vel = 190;
-      aviso("¡Cuidado con la lava! Párate sobre un tubo y presiona ↓", "mal", 1800); S.demo.k = 5; siguienteDemo(); return;
+      aviso("¡Cuidado con la lava! Párate sobre un tubo y presiona ↓", "mal", 1800); S.demo.k = 4; siguienteDemo(); return;
     }
     S.muerto = 1; S.vidas--; S.racha = 0;
     parts.estallido(PX, PISO, "#ff6b3d", 50, 7); parts.estallido(PX, PISO, "#ffd45c", 30, 5); sonar("boom", .55); flash("mal");
@@ -627,7 +580,7 @@
     if (gano) sonar("party", .6);
     A.resultado({
       titulo: gano ? "¡Mundo " + N.num + " superado!" : "Se acabaron las vidas", estrellas: est, puntos: gano ? S.puntos : undefined, record: reg && reg.record,
-      stats: [["Aciertos", S.aciertos + " de " + (S.aciertos + S.errores)], ["Precisión", precision + " %"], ["Mejor racha", S.mejorRacha], ["Monedas (+" + SEG_MONEDA + " s c/u)", S.monedas + "/" + S.monedasTot], ["Tiempos agotados", S.agotados], ["Tiempo", Math.floor(seg / 60) + ":" + ("0" + seg % 60).slice(-2)]]
+      stats: [["Aciertos", S.aciertos + " de " + (S.aciertos + S.errores)], ["Precisión", precision + " %"], ["Mejor racha", S.mejorRacha], ["Monedas (+" + SEG_MONEDA + " s c/u)", S.monedas + "/" + S.monedasTot], ["Tiempo", Math.floor(seg / 60) + ":" + ("0" + seg % 60).slice(-2)]]
         .concat(reg ? [["Liga", "Lugar " + reg.despues + " de " + reg.de]] : []),
       aprende: "<b>" + N.nombre + ":</b> " + M(N.resumen),
       botones: (gano && sig !== null ? [{ txt: "Siguiente mundo →", clase: "verde", fn: function () { transicion(sig); } }] : [])
@@ -997,7 +950,7 @@
     var c = raiz.querySelector("#rCalc");
     c.innerHTML = "<div class='t-cab'><div class='t-tit'>Calculadora</div><button class='t-btn' id='cMin' title='Mostrar u ocultar la calculadora'>" + (localStorage.getItem("semillin_calc_mini") === "1" ? "+ Mostrar" : "− Ocultar") + "</button></div><div class='pantalla-calc' id='cP'>0</div><div class='teclas-calc'>" +
       ["7", "8", "9", "÷", "(", ")", "C", "4", "5", "6", "×", "√", "x²", "←", "1", "2", "3", "−", "Ln", "e^", "ans", "0", ".", "mod", "+", "^", "!", "="].map(function (k) { return "<button data-c='" + k + "' class='" + (k === "=" ? "igual" : (/^[0-9.]$/.test(k) ? "" : "op")) + "'>" + k + "</button>"; }).join("") +
-      "</div><button class='usar-calc' id='cUsar' title='Copia el resultado al cuadro de respuesta'>Pasar a mi respuesta →</button>";
+      "</div>";
     var expr = "", ans = "0", p = c.querySelector("#cP");
     c.classList.toggle("mini", localStorage.getItem("semillin_calc_mini") === "1");
     c.querySelector("#cMin").onclick = function (e) { e.stopPropagation(); var mini = !c.classList.contains("mini"); c.classList.toggle("mini", mini); localStorage.setItem("semillin_calc_mini", mini ? "1" : "0"); this.textContent = mini ? "+ Mostrar" : "− Ocultar"; this.blur(); };
@@ -1013,11 +966,6 @@
         p.textContent = expr || "0"; b.blur();
       };
     });
-    c.querySelector("#cUsar").onclick = function (e) {
-      e.stopPropagation();
-      var inp = raiz.querySelector("#rResp"); if (!inp) { aviso("Primero llega a la zona de cálculo", "", 1200); return; }
-      var r = evaluar(expr); inp.value = isNaN(r) ? (expr || ans) : String(Math.round(r * 1e9) / 1e9); inp.focus();
-    };
   }
 
   /* ---------- Bucle principal ---------- */
@@ -1051,7 +999,7 @@
       if (modalAbierto) return;
       if (e.code === "Space" || e.key === "ArrowUp") { e.preventDefault(); brincar(); }
       if (e.key === "ArrowDown") { e.preventDefault(); teclas.abajo = true; if (S.fase === "tubos" || S.fase === "salida") entrar(); }
-      if (e.key === "Enter" && S.fase === "calcular") { e.preventDefault(); if (S.paso && S.paso.tipo === "num" && !S.jefe) revisarResp(); else tubos(); }
+      if (e.key === "Enter" && S.fase === "calcular") { e.preventDefault(); tubos(); }
       if (e.key === "Enter" && S.fase === "solucion") { e.preventDefault(); continuar(); }
       if (e.key === "p" || e.key === "P") menuPausa();
     });
