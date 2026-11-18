@@ -1,0 +1,14 @@
+{
+  "name": "semillin-run",
+  "version": "2.0.0",
+  "description": "Juego educativo de Modelado y Simulación de Sistemas Dinámicos con liga en línea",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "pg": "^8.13.1"
+  },
+  "license": "MIT"
+}
