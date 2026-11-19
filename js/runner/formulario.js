@@ -11,8 +11,6 @@
     { t: "Generadores congruenciales", f: [
       ["Mixto", "$X_{n+1} = (aX_n + C) \\bmod m$", "Para $X_{n+1}$ se considera el numerador del quebrado; número rectangular $= \\frac{X_{n+1}}{m}$. Si $n = m$ y $X_n = X_{n+1}$: período completo y números aceptados."],
       ["Multiplicativo", "$X_{n+1} = aX_n \\bmod m, \\qquad PE = \\dfrac{m}{4}$", "$PE$ = período esperado. Si $n = PE$ y $X_n = X_{n+1}$: período completo y números aceptados."],
-      ["Reglas del mixto", "$(a - 1) \\bmod 4 = 0$ si $4$ divide a $m$; $\\ (a - 1) \\bmod b = 0$ si $b$ es factor primo de $m$", "$a$ impar no divisible entre 3 ni 5; $c$ impar y relativamente primo a $m$ (binario: $c \\bmod 8 = 5$)."],
-      ["Multiplicativo decimal", "$a = 200t \\pm p$, $\\ m = 10^d$, $\\ PE = 5 \\times 10^{d-2}$", "$p \\in \\{3, 11, 13, 19, 21, 27, 29, 37, 53, 59, 61, 67, 77, 83, 91\\}$; $X_0$ impar, no divisible entre 5."]
     ] },
     { t: "Pruebas estadísticas", f: [
       ["Promedios", "$\\bar{X} = \\dfrac{\\sum x_i}{N}, \\qquad Z_0 = \\left|\\dfrac{\\left(\\bar{X} - \\frac{1}{2}\\right)\\sqrt{N}}{\\sqrt{\\frac{1}{12}}}\\right|$", "$\\alpha_{real} = 100\\% - \\alpha$ → $Z_{\\alpha_{real}/2}$ (tabla normal). Aceptados si $|Z_0| < Z$."],

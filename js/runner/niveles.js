@@ -40,6 +40,7 @@
     if (o.fila && !Array.isArray(o.fila[0])) o.filas = [o.fila]; else o.filas = o.fila || [];
     delete o.fila;
     o.tipo = typeof o.ok === "number" ? "num" : "opcion";
+    if (o.seg) o.seg = TIEMPO[o.seg] || o.seg;
     if (o.tipo === "num" && o.mal === undefined) o.mal = falso(o.ok, o.dec, o.males);
     delete o.males;
     o.okTxt = o.tipo === "num" ? (o.pesos ? pesos(o.ok) : fx(o.ok, o.dec)) : o.ok;
@@ -47,6 +48,8 @@
     return o;
   }
   /* Pregunta del jefe final: q, tubo correcto, tubo falso, fórmula o regla de clase, tabla que abre el botón Tablas. */
+  /* Segundos base de cada celda: 30 s las sencillas y hasta 3 min las más largas (antes de sumar las monedas). */
+  var TIEMPO = { 25: 30, 30: 30, 35: 45, 40: 60, 45: 60, 50: 75, 55: 90, 60: 90, 70: 120, 75: 120, 80: 150, 90: 180 };
   function J(q, ok, mal, fg, tabla) { return { q: q, ok: ok, mal: mal, fg: fg, tabla: tabla }; }
   function conFilas(q, filas) { q.filas = filas; return q; }
 
@@ -77,7 +80,7 @@
       var arriba = mixto ? T`(${g.a})(${x}) + ${g.c}` : T`(${g.a})(${x})`;
       var cuenta = T`\dfrac{${arriba}}{${m}} = \dfrac{${num}}{${m}}` + (ent ? (X1 ? T` = ${ent} + \dfrac{${X1}}{${m}}` : T` = ${ent} + 0`) : "");
       var mal = ent !== X1 ? ent : (X1 + 1) % m;
-      pasos.push(P({ t: T`$n = ${n}$ · $X_n = ${x}$`, fg: fg,
+      pasos.push(P({ t: T`renglón $n = ${n}$ ($X_n = ${x}$)`, fg: fg,
         f: T`$${cuenta}$ → $X_{n+1} = ${X1}$ → número rectangular $= \dfrac{${X1}}{${m}}$`,
         pide: T`el número rectangular de $n = ${n}$`, ok: fr(X1, m), mal: fr(mal, m),
         fila: [String(n), String(x), "$" + cuenta + "$", String(X1), fr(X1, m)], ver: [0, 1], col: 4, seg: mixto ? 30 : 35 }));
@@ -88,7 +91,7 @@
     var concl = ok ? T`Como $n = ${sim} = ${esp}$ y $X_n = X_{n+1}$: los números rectangulares son aceptados y el período es completo.`
       : T`Como $n = ${n} \ne ${sim} = ${esp}$: los números rectangulares son rechazados y el período es incompleto.`;
     return {
-      g: g, periodo: n, esperado: esp, acepta: ok,
+      g: g, periodo: n, datosZona: mixto ? T`$a = ${g.a}$, $X_0 = ${g.x0}$, $C = ${g.c}$, $m = ${m}$` : T`$a = ${g.a}$, $X_0 = ${g.x0}$, $m = ${m}$`, esperado: esp, acepta: ok,
       enunciado: T`Se desea generar números rectangulares con un generador congruencial ${mixto ? "mixto" : "multiplicativo"}. Los valores para este generador son: ` +
         (mixto ? T`$a = ${g.a}$, $X_0 = ${g.x0}$, $C = ${g.c}$ y $m = ${m}$.` : T`$a = ${g.a}$, $X_0 = ${g.x0}$ y $m = ${m}$.`) +
         T` Llena la tabla hasta que $X_{n+1}$ regrese a $X_0 = ${g.x0}$ y determina si el período es completo y si los números rectangulares son aceptados.`,
@@ -287,7 +290,7 @@
     pasos.push(pasoChi(a, 1, "n-1", ["Tabla", "", String(tab)], 2));
     return {
       datos: D, alfa: a, info: info, FO: FO, FE: FE, FEa: FEa, FOa: FOa, X2: X2, acepta: acepta,
-      enunciado: enunPrueba("distancias", a) + T` $n = ${nG}$ (distancia máxima entre los 5 dígitos).`,
+      enunciado: enunPrueba("distancias", a) + T` Para $FE_i$ usa $n = ${nG}$, como en el ejemplo de clase.`,
       cols: ["$i$", "$FO_i$", "$FE_i$"],
       pasos: pasos,
       jefe: [conclJ(acepta, "X_0^2", T`X^2_{${fx(a)},\,1}`)],
@@ -490,7 +493,7 @@
     });
     var fgP = T`$P(\text{meta}) = \dfrac{\text{No. de veces que se llegó a la meta}}{\text{No. de corridas}}$`;
     return {
-      ini: ini, base: base, meta: meta, R: Rs, filas: filas, metas: metas, quiebras: quiebras, corridas: corridas, Pm: Pm, datos: Rs,
+      ini: ini, base: base, meta: meta, le: le, R: Rs, filas: filas, metas: metas, quiebras: quiebras, corridas: corridas, Pm: Pm, datos: Rs,
       enunciado: T`Juego de volados. Condiciones: 1) se dobla la apuesta cada vez que se pierde (si se apuesta ${pesos(base)} y se pierde, se apuesta el doble, y así sucesivamente); si se gana se regresa a la apuesta inicial; 2) si la apuesta es mayor que la cantidad disponible, se apuesta lo que se tiene. Cantidad disponible: ${pesos(ini)}; apuesta: ${pesos(base)}; meta: ${pesos(meta)}; ganancia = cantidad apostada; el volado se gana si ${regla} y se pierde en otro caso. Al llegar a la meta o a la quiebra empieza otra corrida con ${pesos(ini)}. ¿Cuál es la probabilidad de llegar a la meta?`,
       cols: ["Corrida", "Antes", "Apuesta", "# aleatorio", "¿Ganó?", "Después", "¿Meta?"],
       pasos: pasos,
@@ -548,6 +551,34 @@
     { TL: [9, 2, 6, 8, 6, 9], TS: [3, 2, 4, 6, 4, 4] }, { TL: [4, 2, 5, 3, 5, 10], TS: [3, 3, 4, 4, 6, 3] }, { TL: [2, 2, 4, 8, 8, 3], TS: [3, 4, 3, 2, 2, 3] },
     { TL: [4, 8, 8, 3, 6, 3], TS: [3, 2, 2, 3, 5, 2] }, { TL: [5, 2, 6, 3, 6, 2], TS: [3, 2, 4, 6, 4, 4] }, { TL: [5, 5, 5, 10, 2, 2], TS: [4, 4, 6, 3, 1, 4] }
   ].map(caja));
+
+  /* ---------- Datos del problema que se repiten en cada zona de cálculo ---------- */
+  function datosDe(id, V) {
+    var al = V.alfa !== undefined ? T`$\alpha = ${pct(V.alfa)}$` : "";
+    switch (id) {
+      case "m04": case "m05": case "m09": return T`$N = 10$, ` + al;
+      case "m06": return T`$N = 10$, $n = ${V.n}$, ` + al;
+      case "m07": return T`$N = 10$, $n = 2$, ` + al;
+      case "m08": return T`$N = 10$, $n = 3$, ` + al;
+      case "m10": return T`$\lambda = ${V.lam}$, ${V.R.length} clientes ($R$ de cada cliente en la tabla)`;
+      case "m11": return T`$a = ${V.a}$ min, $b = ${V.b}$ min ($R$ de cada refresco en la tabla)`;
+      case "m12": return T`$R$ de cada mensaje en la tabla`;
+      case "m13": return T`$\lambda = ${V.lam}$`;
+      case "m14": return T`Cantidad inicial ${pesos(V.ini)}, apuesta inicial ${pesos(V.base)}, meta ${pesos(V.meta)}; se gana si ${V.le ? "$R \le 0.5$" : "$R < 0.5$"}`;
+      case "m15": return T`Tiempos de llegada: ${V.TL.join(", ")} min · tiempos de servicio: ${V.TS.join(", ")} min`;
+    }
+    return "";
+  }
+  NIVELES.forEach(function (Nv) {
+    Nv.variantes.forEach(function (V) {
+      var base = V.datosZona || datosDe(Nv.id, V);
+      V.pasos.forEach(function (p) {
+        var m = /\$X_n = (\d+)\$/.exec(p.t || "");
+        p.datos = base.replace("{xn}", m ? m[1] : "");
+      });
+      V.datosZona = base.replace(/ · en este renglón.*$/, "");
+    });
+  });
 
   /* ---------- Numeración y comprobaciones ---------- */
   NIVELES.forEach(function (Nv, i) {

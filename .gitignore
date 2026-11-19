@@ -4,3 +4,8 @@ respaldo/
 *.log
 perfil-*/
 propuesta/
+Manuales/
+escritorio/node_modules/
+escritorio/dist/
+escritorio/juego/
+versiones/

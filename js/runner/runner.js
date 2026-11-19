@@ -11,7 +11,7 @@
   "use strict";
   var B = window.BROTE, A = B.arcade, L = B.liga, NV = B.niveles.NIVELES, PROBLEMA = B.niveles.problema, fx = B.niveles.fx, M = B.mate.html, plano = B.mate.plano;
   var W = 1000, H = 440, PISO = 340, PX = 170, G = 2300, SALTO = -800, PASO = 1 / 120;
-  var ALTO_DE_PIE = 50, ALTO_AGACHADO = 28, SEG_MONEDA = 5, MONEDAS_VUELTA = 5;
+  var ALTO_DE_PIE = 50, ALTO_AGACHADO = 28, SEG_MONEDA = 5, MONEDAS_VUELTA = 8;
 
   /* ---------- Paletas: un color de mundo por nivel ---------- */
   var TEMAS = [
@@ -377,7 +377,7 @@
   /* Cada vuelta: virus que esquivar y monedas de tiempo (+5 s cada una para la siguiente zona de cálculo). */
   function nuevaVuelta() {
     S.fase = "correr"; S.dist = 0; S.prev.dist = 0; S.objs = []; S.tramo = null; S.extra = 0;
-    S.paso = pasoActual(); S.largo = 1500 + Math.min(S.k, 8) * 50;
+    S.paso = pasoActual(); S.largo = 2800 + Math.min(S.k, 8) * 100;
     S.vel = S.velBase = Math.min(360, 240 + S.k * 10 + S.i * 3);
     var x = 640, k = 0, nivel = S.i;
     while (x < S.largo - 220) {
@@ -455,7 +455,7 @@
     var titulo = S.demo ? "Zona de cálculo (demo)" : "Zona de cálculo · " + M(p.t);
     var pista = S.demo ? "<div class='demo-pista'><span class='coach-n'>" + (S.demo.k + 1) + "/" + DEMO.length + "</span>" + DEMO[S.demo.k].txt + "</div>" : "";
     var boton = p.tabla ? (p.tabla === "poker" ? "<b>Tablas y póker</b> (probabilidades)" : "<b>Tablas</b>") : "";
-    var cuerpo = pista + "<div class='pide-run'>" + pideTxt(p, "Calcula ") + "</div>" + (p.fg ? "<div class='fg-run'><small>Fórmula de clase</small>" + M(p.fg) + "</div>" : "") +
+    var cuerpo = pista + (p.datos ? "<div class='datos-zona'><small>Datos del problema</small>" + M(p.datos) + "</div>" : "") + "<div class='pide-run'>" + pideTxt(p, "Calcula ") + "</div>" + (p.fg ? "<div class='fg-run'><small>Fórmula de clase</small>" + M(p.fg) + "</div>" : "") +
       "<div>Resuelve con la calculadora" + (boton ? " y el botón " + boton : "") + ". Los tubos dirán:</div>";
     mostrarPregunta(titulo, cuerpo + opsHtml() + reloj, "<div class='pie-q'><button class='btn verde' id='rListo'>Ir a los tubos <kbd>Enter</kbd></button>" + (S.demo ? "<button class='btn blanco chico' id='rSkip2'>Saltar demo <kbd>Esc</kbd></button>" : "") + "</div>");
     if (S.demo) raiz.querySelector("#rSkip2").onclick = finDemo;

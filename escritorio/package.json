@@ -1,0 +1,25 @@
+{
+  "name": "semillin-run-escritorio",
+  "productName": "Semillín Run",
+  "version": "3.0.0",
+  "description": "Semillín Run · juego de Modelado y Simulación de Sistemas Dinámicos (versión de escritorio)",
+  "author": "Jordan Emanuel Ruedas Vazquez",
+  "main": "main.js",
+  "scripts": {
+    "copiar": "node copiar.js",
+    "start": "npm run copiar && electron .",
+    "exe": "npm run copiar && electron-builder --win portable --x64"
+  },
+  "build": {
+    "appId": "mx.uanl.fime.semillinrun",
+    "productName": "Semillín Run",
+    "files": ["main.js", "juego/**/*"],
+    "win": { "target": "portable", "icon": "icono.ico" },
+    "portable": { "artifactName": "SemillinRun.exe" },
+    "directories": { "output": "dist" }
+  },
+  "devDependencies": {
+    "electron": "45.4.1",
+    "electron-builder": "26.18.0"
+  }
+}

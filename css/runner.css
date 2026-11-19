@@ -338,3 +338,13 @@ table.tpe th.alfa { background: var(--oro2); }
 .tpe.poker .katex { font-size: 1.05em; }
 .pie-q { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .ops-run > span .katex { font-size: 1.3em; }
+.datos-zona { background: #eef6ff; border: 3px solid var(--tinta); padding: 2px 12px 6px; margin: 4px 0 8px; font-size: 15px; line-height: 1.5; }
+.datos-zona small { display: table; margin: 0 0 3px -12px; background: #3d6fb0; color: #fff; font-family: var(--pix); font-size: 13px; padding: 0 8px; letter-spacing: 1px; text-transform: uppercase; }
+/* v4: zona de cálculo compacta (cabe sin barra de desplazamiento) */
+.pregunta-run { padding: 9px 16px 10px; font-size: 14px; top: 10px; max-height: calc(100% - 20px); }
+.pregunta-run .q-tit { margin-bottom: 4px; }
+.pregunta-run .pide-run { margin: 4px 0 2px; }
+.pregunta-run .fg-run { margin: 4px 0 4px; padding: 0 10px 5px; line-height: 1.45; font-size: 15px; }
+.datos-zona { margin: 2px 0 4px; padding: 1px 10px 4px; font-size: 14px; }
+.pregunta-run .ops-run { margin: 6px 0; }
+.pregunta-run .btn { margin-top: 5px; }
