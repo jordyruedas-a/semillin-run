@@ -9,18 +9,18 @@
   function M(s) { return B.mate ? B.mate.html(s) : s; }
   var SECCIONES = [
     { t: "Generadores congruenciales", f: [
-      ["Mixto", "$X_{n+1} = (aX_n + c) \\bmod m$", "$X_{n+1}$ es el numerador del quebrado; número rectangular $R = \\frac{X_{n+1}}{m}$. Se acepta si el período $n = m$."],
-      ["Multiplicativo", "$X_{n+1} = aX_n \\bmod m$", "Binario: $m = 2^d$, $a = 8t \\pm 3$, $X_0$ impar, $PE = \\frac{m}{4}$. Se acepta si $n = PE$."],
+      ["Mixto", "$X_{n+1} = (aX_n + C) \\bmod m$", "Para $X_{n+1}$ se considera el numerador del quebrado; número rectangular $= \\frac{X_{n+1}}{m}$. Si $n = m$ y $X_n = X_{n+1}$: período completo y números aceptados."],
+      ["Multiplicativo", "$X_{n+1} = aX_n \\bmod m, \\qquad PE = \\dfrac{m}{4}$", "$PE$ = período esperado. Si $n = PE$ y $X_n = X_{n+1}$: período completo y números aceptados."],
       ["Reglas del mixto", "$(a - 1) \\bmod 4 = 0$ si $4$ divide a $m$; $\\ (a - 1) \\bmod b = 0$ si $b$ es factor primo de $m$", "$a$ impar no divisible entre 3 ni 5; $c$ impar y relativamente primo a $m$ (binario: $c \\bmod 8 = 5$)."],
       ["Multiplicativo decimal", "$a = 200t \\pm p$, $\\ m = 10^d$, $\\ PE = 5 \\times 10^{d-2}$", "$p \\in \\{3, 11, 13, 19, 21, 27, 29, 37, 53, 59, 61, 67, 77, 83, 91\\}$; $X_0$ impar, no divisible entre 5."]
     ] },
-    { t: "Pruebas estadísticas (α = 5 %)", f: [
-      ["Promedios", "$\\bar{X} = \\dfrac{\\sum x_i}{N}, \\qquad Z_0 = \\left|\\dfrac{\\left(\\bar{X} - \\frac{1}{2}\\right)\\sqrt{N}}{\\sqrt{\\frac{1}{12}}}\\right|$", "$\\alpha_{real} = 100\\% - \\alpha = 95\\%$ → $Z_{0.475} = 1.96$ (tabla normal). Aceptados si $Z_0 < Z$."],
+    { t: "Pruebas estadísticas", f: [
+      ["Promedios", "$\\bar{X} = \\dfrac{\\sum x_i}{N}, \\qquad Z_0 = \\left|\\dfrac{\\left(\\bar{X} - \\frac{1}{2}\\right)\\sqrt{N}}{\\sqrt{\\frac{1}{12}}}\\right|$", "$\\alpha_{real} = 100\\% - \\alpha$ → $Z_{\\alpha_{real}/2}$ (tabla normal). Aceptados si $|Z_0| < Z$."],
       ["Kolmogorov-Smirnov", "$F(x_i) = \\dfrac{i}{N}, \\qquad D_n = \\max\\left[F(x_i) - x_i\\right]$", "Ordenar de menor a mayor. Aceptados si $D_n < d_{\\alpha,N}$ (tabla KS)."],
       ["Frecuencias", "$FE_i = \\dfrac{N}{n}, \\qquad X_0^2 = \\displaystyle\\sum \\frac{(FO_i - FE_i)^2}{FE_i}$", "$n$ intervalos iguales entre 0 y 1. Aceptados si $X_0^2 < X^2_{\\alpha,\\,n-1}$."],
       ["Series", "$FE = \\dfrac{N - 1}{n^2}, \\qquad X_0^2 = \\dfrac{n^2}{N - 1}\\displaystyle\\sum\\sum (FO_{ij} - FE)^2$", "Parejas $(U_i,\\ U_{i+1})$ en el plano. Aceptados si $X_0^2 < X^2_{\\alpha,\\,n^2-1}$."],
       ["Distancias", "$FE_i = (0.1)(0.9)^i\\,N$ si $i < n, \\qquad FE = (0.9)^n\\,N$ si $i \\ge n$", "$i$ = dígitos entre dos dígitos iguales. Se agrupan las $FE < 5$; $X^2_{\\alpha,\\,g-1}$ con $g$ grupos."],
-      ["Póker", "$FE_i = P(\\text{mano})\\,N, \\qquad X_0^2 = \\displaystyle\\sum \\frac{(FO_i - FE_i)^2}{FE_i}$", "TD 0.3024 · 1 par 0.504 · 2 pares 0.108 · tercia 0.072 · full 0.009 · póker 0.0045 · quintilla 0.0001. Agrupar $FE < 5$."]
+      ["Póker", "$FE_i = P(\\text{mano})\\,N, \\qquad X_0^2 = \\displaystyle\\sum \\frac{(FO_i - FE_i)^2}{FE_i}$", "Probabilidades en el botón Tablas → Póker. Se agrupan las $FE < 5$; $X^2_{\\alpha,\\,n-1}$ con $n$ categorías."]
     ] },
     { t: "Variables aleatorias no uniformes", f: [
       ["Exponencial", "$x = -\\dfrac{1}{\\lambda}\\,\\mathrm{Ln}\\,R$", "$\\lambda$ se sustituye directo en $\\frac{1}{\\lambda}$, como en el ejemplo del cajero."],
@@ -30,8 +30,7 @@
     ] },
     { t: "Aplicaciones", f: [
       ["Cola (una caja)", "H. inicio $= \\max$(H. llegada, H. fin anterior), $\\quad$ H. fin = H. inicio + T. servicio", "T. espera = H. fin − H. llegada · Inactivo = H. inicio − H. fin anterior · $TPS = \\frac{\\sum \\text{espera}}{\\text{clientes}}$ · % desocupado $= \\frac{\\sum \\text{inactivo}}{\\text{tiempo total}} \\times 100$."],
-      ["Inventarios (q, R)", "Inv. promedio $= \\dfrac{\\text{inicial} + \\text{final}}{2}$; con faltante: $\\dfrac{(\\text{inicial})^2}{2(\\text{demanda})}$", "Demanda ajustada = demanda × factor estacional. Ordenar si inv. final $\\le R$. Costo total = ordenar + llevar ($\\sum$ prom × \\$20/12) + faltante."],
-      ["Volados", "Gana ($R < 0.5$): cantidad + apuesta; pierde: cantidad − apuesta", "Si pierde se dobla la apuesta (o se apuesta lo que se tiene). $P(\\text{meta}) = \\frac{\\text{metas}}{\\text{corridas}}$."]
+      ["Volados", "Gana: cantidad + apuesta; pierde: cantidad − apuesta", "Si pierde se dobla la apuesta (o se apuesta lo que se tiene); si gana regresa a la apuesta inicial. $P(\\text{meta}) = \\frac{\\text{veces en la meta}}{\\text{corridas}}$."]
     ] }
   ];
 
@@ -43,22 +42,37 @@
     TPE.normal.forEach(function (r) { h += "<tr><th>" + r[0] + "</th>" + r.slice(1).map(function (v) { return "<td>" + v + "</td>"; }).join("") + "</tr>"; });
     return h + "</tbody></table>";
   }
+  var ALFA = 0.05;
+  function colChi() { return { "0.05": "0.050", "0.025": "0.025", "0.01": "0.010" }[String(ALFA)] || "0.050"; }
   function tablaChi() {
-    var h = "<table class='tpe'><thead><tr><th>" + M("$\\nu$ \\ $\\alpha$") + "</th>" + TPE.chiCab.map(function (c) { return "<th" + (c === "0.050" ? " class='alfa'" : "") + ">" + c + "</th>"; }).join("") + "</tr></thead><tbody>";
-    TPE.chi.forEach(function (r) { h += "<tr><th>" + r[0] + "</th>" + r.slice(1).map(function (v, j) { return "<td" + (TPE.chiCab[j] === "0.050" ? " class='alfa'" : "") + ">" + v + "</td>"; }).join("") + "</tr>"; });
+    var col = colChi();
+    var h = "<table class='tpe'><thead><tr><th>" + M("$\\nu$ \\ $\\alpha$") + "</th>" + TPE.chiCab.map(function (c) { return "<th" + (c === col ? " class='alfa'" : "") + ">" + c + "</th>"; }).join("") + "</tr></thead><tbody>";
+    TPE.chi.forEach(function (r) { h += "<tr><th>" + r[0] + "</th>" + r.slice(1).map(function (v, j) { return "<td" + (TPE.chiCab[j] === col ? " class='alfa'" : "") + ">" + v + "</td>"; }).join("") + "</tr>"; });
     return h + "</tbody></table>";
   }
   function tablaKS() {
-    var h = "<table class='tpe'><thead><tr><th>N</th><th>α = 10%</th><th class='alfa'>α = 5%</th><th>α = 1%</th></tr></thead><tbody>";
-    TPE.ks.forEach(function (r) { h += "<tr><th>" + r[0] + "</th><td>" + r[1] + "</td><td class='alfa'>" + r[2] + "</td><td>" + r[3] + "</td></tr>"; });
-    return h + "<tr><th>N &gt; 100</th><td>" + M("$\\frac{1.22}{\\sqrt{N}}$") + "</td><td class='alfa'>" + M("$\\frac{1.36}{\\sqrt{N}}$") + "</td><td>" + M("$\\frac{1.63}{\\sqrt{N}}$") + "</td></tr></tbody></table>";
+    var k = { "0.1": 1, "0.05": 2, "0.01": 3 }[String(ALFA)] || 2;
+    function c(j) { return j === k ? " class='alfa'" : ""; }
+    var h = "<table class='tpe'><thead><tr><th>N</th><th" + c(1) + ">α = 10%</th><th" + c(2) + ">α = 5%</th><th" + c(3) + ">α = 1%</th></tr></thead><tbody>";
+    TPE.ks.forEach(function (r) { h += "<tr><th>" + r[0] + "</th><td" + c(1) + ">" + r[1] + "</td><td" + c(2) + ">" + r[2] + "</td><td" + c(3) + ">" + r[3] + "</td></tr>"; });
+    return h + "<tr><th>N &gt; 100</th><td" + c(1) + ">" + M("$\\frac{1.22}{\\sqrt{N}}$") + "</td><td" + c(2) + ">" + M("$\\frac{1.36}{\\sqrt{N}}$") + "</td><td" + c(3) + ">" + M("$\\frac{1.63}{\\sqrt{N}}$") + "</td></tr></tbody></table>";
+  }
+  /* Probabilidades de las manos de póker (PPoker.pdf) */
+  var POKER = [["Todos diferentes", "\\dfrac{10 \\times 9 \\times 8 \\times 7 \\times 6}{10^5}", "0.30240"], ["Un par", "\\dfrac{10 \\times 1 \\times 9 \\times 8 \\times 7}{10^5}\\dbinom{5}{2}", "0.50400"],
+    ["Dos pares", "\\dfrac{1}{2}\\,\\dfrac{10 \\times 1 \\times 9 \\times 1 \\times 8}{10^5}\\dbinom{5}{2}\\dbinom{3}{2}", "0.10800"], ["Tercia", "\\dfrac{10 \\times 1 \\times 1 \\times 9 \\times 8}{10^5}\\dbinom{5}{3}", "0.07200"],
+    ["Full", "\\dfrac{10 \\times 1 \\times 1 \\times 9 \\times 1}{10^5}\\dbinom{5}{2}\\dbinom{3}{2}", "0.00900"], ["Póker", "\\dfrac{10 \\times 1 \\times 1 \\times 1 \\times 9}{10^5}\\dbinom{5}{4}", "0.00450"], ["Quintilla", "\\dfrac{10 \\times 1 \\times 1 \\times 1 \\times 1}{10^5}\\dbinom{5}{5}", "0.00010"]];
+  function tablaPoker() {
+    return "<table class='tpe poker'><thead><tr><th>Categoría</th><th>Cálculo</th><th class='alfa'>Probabilidad</th></tr></thead><tbody>" +
+      POKER.map(function (r) { return "<tr><th>" + r[0] + "</th><td>" + M("$" + r[1] + "$") + "</td><td class='alfa'>" + r[2] + "</td></tr>"; }).join("") + "</tbody></table>";
   }
   var TABLAS = [
     { id: "normal", t: "Distribución normal", nota: "Área entre 0 y z. Para $\\alpha = 5\\%$ se busca $0.4750$ en el cuerpo de la tabla.", html: tablaNormal },
-    { id: "chi", t: "Distribución $X^2$", nota: "$\\nu$ = grados de libertad. Con $\\alpha = 5\\%$ se usa la columna 0.050.", html: tablaChi },
-    { id: "ks", t: "Kolmogorov-Smirnov $d_{\\alpha,N}$", nota: "Renglón = tamaño de la muestra $N$.", html: tablaKS }
+    { id: "chi", t: "Distribución $X^2$", nota: "$\\nu$ = grados de libertad (renglón); la columna es el $\\alpha$ del problema (resaltada).", html: tablaChi },
+    { id: "ks", t: "Kolmogorov-Smirnov $d_{\\alpha,N}$", nota: "Renglón = tamaño de la muestra $N$; columna = $\\alpha$ del problema (resaltada).", html: tablaKS },
+    { id: "poker", t: "Probabilidades del póker", nota: "Probabilidad de cada mano de 5 dígitos. $FE_i = \\text{probabilidad} \\times N$.", html: tablaPoker }
   ];
-  function tablasHtml(cual) {
+  function tablasHtml(cual, alfa) {
+    ALFA = alfa || 0.05;
     var act = TABLAS.some(function (t) { return t.id === cual; }) ? cual : "normal";
     var id = "tb" + Math.floor(Math.random() * 1e6);
     setTimeout(function () {
